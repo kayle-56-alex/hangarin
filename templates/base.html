@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>{% block title %}Hangarin Dashboard{% endblock %}</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ready.css' %}">
+    <link rel="stylesheet" href="{% static 'css/demo.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="main-header">
+            <div class="logo-header">
+                <a href="{% url 'home' %}" class="logo">Hangarin Dashboard</a>
+                <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <button class="topbar-toggler more"><i class="la la-ellipsis-v"></i></button>
+            </div>
+            <nav class="navbar navbar-header navbar-expand-lg">
+                <div class="container-fluid">
+                    <form class="navbar-left navbar-form nav-search mr-md-3" action="{% url 'home' %}" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="q" placeholder="Search ..." class="form-control" value="{{ query|default:'' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="la la-search search-icon"></i></span>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
+                                <img src="{% static 'img/profile.jpg' %}" alt="user-img" width="36" class="img-circle">
+                                <span>{{ user.username|default:"Hizrian" }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                <li>
+                                    <div class="user-box">
+                                        <div class="u-img"><img src="{% static 'img/profile.jpg' %}" alt="user"></div>
+                                        <div class="u-text">
+                                            <h4>{{ user.username|default:"Hizrian" }}</h4>
+                                            <p class="text-muted">{{ user.email|default:"hello@themekita.com" }}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <div class="dropdown-divider"></div>
+                                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">{% csrf_token %}</form>
+                                <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="sidebar">
+            <div class="scrollbar-inner sidebar-wrapper">
+                <div class="user">
+                    <div class="photo"><img src="{% static 'img/profile.jpg' %}"></div>
+                    <div class="info">
+                        <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+                            <span>{{ user.username|default:"Hizrian" }}<span class="user-level">Administrator</span><span class="caret"></span></span>
+                        </a>
+                        <div class="collapse in" id="collapseExample">
+                            <ul class="nav">
+                                <li><a href="#"><span class="link-collapse">My Profile</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="nav">
+                    <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <a href="{% url 'home' %}">
+                            <i class="la la-dashboard"></i>
+                            <p>Dashboard</p>
+                            <span class="badge badge-count">{{ tasks.count }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'add_task' %}active{% endif %}">
+                        <a href="{% url 'add_task' %}">
+                            <i class="la la-plus-circle"></i> <p>Add Task</p>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">
+                        <a href="{% url 'tables' %}">
+                            <i class="la la-table"></i>
+                            <p>Tables</p>
+                            <span class="badge badge-count">{{ tasks.count }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+                        <a href="{% url 'notifications' %}">
+                            <i class="la la-bell"></i>
+                            <p>Notifications</p>
+                            <span class="badge badge-success">{{ pending_count }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
+<script src="{% static 'js/core/popper.min.js' %}"></script>
+<script src="{% static 'js/core/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/ready.min.js' %}"></script>
+</html>

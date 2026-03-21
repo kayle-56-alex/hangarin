@@ -1,0 +1,74 @@
+/* Custom Styles for Hangarin Dashboard */
+:root {
+    --primary-color: #4e73df;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --dark-blue: #224abe;
+}
+
+body {
+    background-color: #f8f9fc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #5a5c69;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+h1 {
+    font-weight: 800;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-title {
+    font-weight: 700;
+    color: var(--dark-blue);
+    margin-bottom: 0.5rem;
+}
+
+/* Status Badges Customization */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.category-label {
+    font-size: 0.75rem;
+    color: var(--info-color);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Date and Footer Styling */
+.card-footer {
+    background-color: #fff;
+    border-top: 1px solid #eeeeee;
+}
+
+.text-deadline {
+    font-size: 0.85rem;
+    color: #aab2bd;
+}
+
+/* Priority Colors */
+.priority-critical { border-top-color: var(--danger-color); }
+.priority-high { border-top-color: var(--warning-color); }

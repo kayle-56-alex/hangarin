@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <h4 class="page-title">Dashboard</h4>
+    <div class="row">
+        {% for task in tasks %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                <div style="height: 6px;" class="{% if task.priority.name == 'high' or task.priority.name == 'critical' %}bg-danger{% elif task.priority.name == 'medium' %}bg-warning{% else %}bg-info{% endif %}"></div>
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="font-weight-bold mb-1 text-dark">{{ task.title }}</h5>
+                        <button class="btn btn-link p-0 text-warning" data-toggle="modal" data-target="#noteModal{{ task.id }}">
+                            <i class="la la-sticky-note" style="font-size: 1.5rem;"></i>
+                        </button>
+                    </div>
+                    
+                    <span class="badge badge-pill badge-light border text-muted mb-3">{{ task.category.name }}</span>
+                    
+                    <div class="subtask-list mt-2">
+                        <p class="small font-weight-bold text-uppercase text-muted mb-2">Checklist Items</p>
+                        {% for sub in task.subtasks.all %}
+                        <div class="d-flex align-items-center mb-2">
+                            <a href="{% url 'toggle_subtask' sub.id %}" class="mr-2 text-decoration-none">
+                                <i class="la {% if sub.status == 'Completed' %}la-check-circle text-success{% else %}la-circle text-muted{% endif %}" style="font-size: 1.4rem;"></i>
+                            </a>
+                            <span class="small {% if sub.status == 'Completed' %}text-muted{% endif %}" 
+                                  {% if sub.status == 'Completed' %}style="text-decoration: line-through;"{% endif %}>
+                                {{ sub.title }}
+                            </span>
+                        </div>
+                        {% empty %}
+                        <p class="small text-italic text-muted">No subtasks defined.</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="progress-container mt-4 mb-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small text-muted font-weight-bold">Progress</span>
+                            <span class="small text-muted">{{ task.get_progress }}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 10px;">
+                            <div class="progress-bar {% if task.get_progress == 100 %}bg-success{% else %}bg-primary{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {{ task.get_progress }}%;" 
+                                 aria-valuenow="{{ task.get_progress }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge {% if task.status == 'Completed' %}badge-success{% elif task.status == 'In Progress' %}badge-primary{% else %}badge-warning{% endif %}">
+                            {{ task.status }}
+                        </span>
+                        <div class="btn-group">
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-link text-primary"><i class="la la-edit"></i></a>
+                            <a href="{% url 'delete_task' task.id %}" class="btn btn-sm btn-link text-danger" onclick="return confirm('Delete this?')"><i class="la la-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="noteModal{{ task.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="border-radius: 15px;">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title font-weight-bold"><i class="la la-sticky-note mr-2"></i>Notes: {{ task.title }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% for note in task.notes.all %}
+                        <div class="p-3 mb-2 bg-light border-left border-warning" style="border-left-width: 4px !important; border-radius: 5px;">
+                            <p class="mb-1">{{ note.content }}</p>
+                            <small class="text-muted">{{ note.created_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted py-3">No notes found.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
