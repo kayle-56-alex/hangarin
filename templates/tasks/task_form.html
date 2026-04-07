@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <h4 class="page-title">{% if task %}Edit Task: {{ task.title }}{% else %}Create New Task{% endif %}</h4>
+    <div class="card shadow-sm">
+        <form method="POST" id="task-form">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Task Title</label>
+                    <input type="text" name="title" class="form-control" value="{{ task.title|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" class="form-control">
+                        <option value="">-- No Category --</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if task.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="3">{{ task.description|default:'' }}</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select name="priority" class="form-control">
+                                <option value="Critical" {% if task.priority.name|lower == 'critical' %}selected{% endif %}>Critical</option>
+                                <option value="High" {% if task.priority.name|lower == 'high' %}selected{% endif %}>High</option>
+                                <option value="Medium" {% if task.priority.name|lower == 'medium' or not task %}selected{% endif %}>Medium</option>
+                                <option value="Low" {% if task.priority.name|lower == 'low' %}selected{% endif %}>Low</option>
+                                <option value="Optional" {% if task.priority.name|lower == 'optional' %}selected{% endif %}>Optional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Deadline</label>
+                            <input type="date" name="deadline" class="form-control" value="{{ task.deadline|date:'Y-m-d' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="form-group">
+                    <label class="font-weight-bold"><i class="la la-check-square"></i> Checklist Items</label>
+                    <div id="checklist-items" class="mt-2">
+                        {% if task %}
+                            {% for sub in task.subtasks.all %}
+                            <div class="p-2 mb-1 bg-light border-left border-success rounded d-flex justify-content-between align-items-center">
+                                <span>{{ sub.title }}</span>
+                                <span class="badge badge-light border text-muted small">{{ sub.status }}</span>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="input-group mt-3">
+                        <input type="text" id="new-subtask-input" class="form-control" placeholder="Add a checklist item...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" onclick="addSubtask()">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-action">
+                <button type="submit" class="btn btn-success">Save Task</button>
+                <a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addSubtask() {
+    const input = document.getElementById('new-subtask-input');
+    const container = document.getElementById('checklist-items');
+    if (input.value.trim() !== "") {
+        const div = document.createElement('div');
+        div.className = "p-2 mb-1 bg-white border rounded d-flex justify-content-between align-items-center shadow-sm";
+        div.innerHTML = `<span>${input.value}</span><input type="hidden" name="subtasks[]" value="${input.value}"><button type="button" class="btn btn-link btn-danger p-0" onclick="this.parentElement.remove()"><i class="la la-times"></i></button>`;
+        container.appendChild(div);
+        input.value = "";
+    }
+}
+</script>
+{% endblock %}
